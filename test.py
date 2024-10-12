@@ -3,65 +3,65 @@ from scanner import Scanner
 scanner = Scanner()
 
 def check_valid_path1():
-    token = "/abc/def"
+    token = "\"/abc/def\""
     expected = ["<PATH, '\"/abc/def\"'>",]
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path2():
-    token = "/hello_123/world-456"
+    token = "\"/hello_123/world-456\""
     expected = ["<PATH, '\"/hello_123/world-456\"'>",]
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path3():
-    token = "/"
+    token = "\"/\""
     expected = ["<PATH, '\"/\"'>",]
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_filepath():
-    token = "/abc/def/file.txt"
+    token = "\"/abc/def/file.txt\""
     expected = ["<PATH, '\"/abc/def/file.txt\"'>",]
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_string_against_path():
-    token = "invalid"
+    token = "\"invalid\""
     expected = ["<IDENTIFIER, '\"invalid\"'>",]
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_invalid_path1():
     # expects an error
-    token = "/abc/def/"
+    token = "\"/abc/def/\""
     expected = []
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_invalid_path2():
     # expects an error
-    token = "/abc//def/"
+    token = "\"/abc//def/\""
     expected = []
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_invalid_path3():
     # expects an error
-    token = "//"
+    token = "\"//\""
     expected = []
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_invalid_path4():
     # expects an error
-    token = "abc/def"
+    token = "\"abc/def\""
     expected = []
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_invalid_path5():
-    invalid_token = "/home//"
+    invalid_token = "\"/home//\""
     expected = []
     # expects errors
 
@@ -72,6 +72,14 @@ def check_invalid_token():
     token = "\"abc,d"
     expected = []
     # expects errors
+
+    actual = scanner.scan(token)
+    assert(actual == expected)
+
+def identifier_cannot_start_with_number():
+    token = "123a"
+    expected = []
+    # expects errors, identifier cannot start with numbers
 
     actual = scanner.scan(token)
     assert(actual == expected)
@@ -166,7 +174,7 @@ def parse_complicated_program():
         "<KEYWORD, 'call'>",
         "<IDENTIFIER, 'rename_dirs'>",
         "<SEPARATOR, '('>",
-         "<IDENTIFIER, 'directories'>",
+        "<IDENTIFIER, 'directories'>",
         "<SEPARATOR, ')'>",
         "<SEPARATOR, ';'>",
     ]
@@ -187,6 +195,7 @@ def test_all():
     check_invalid_path4()
     check_invalid_path5()
     check_invalid_token()
+    identifier_cannot_start_with_number()
     check_maximal_munch()
     check_keyword_as_function_name()
     parse_complicated_program()
