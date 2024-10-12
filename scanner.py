@@ -24,6 +24,9 @@ class Scanner:
     def reset_cursor(self):
         self.cursor = 0
     
+    def scan_one(self, token):
+        return
+    
     def scan(self, program):
         for line in program.split("\n"):
             self.reset_cursor()
