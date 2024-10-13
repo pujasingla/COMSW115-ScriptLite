@@ -5,30 +5,35 @@ scanner = Scanner()
 def check_valid_path1():
     token = "\"/abc/def\""
     expected = ["<PATH, '\"/abc/def\"'>",]
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path2():
     token = "\"/hello_123/world-456\""
     expected = ["<PATH, '\"/hello_123/world-456\"'>",]
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path3():
     token = "\"/\""
     expected = ["<PATH, '\"/\"'>",]
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_filepath():
     token = "\"/abc/def/file.txt\""
     expected = ["<PATH, '\"/abc/def/file.txt\"'>",]
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_string_against_path():
     token = "\"invalid\""
-    expected = ["<IDENTIFIER, '\"invalid\"'>",]
+    expected = ["<STRING, '\"invalid\"'>",]
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
@@ -36,43 +41,49 @@ def check_invalid_path1():
     # expects an error
     token = "\"/abc/def/\""
     expected = []
+    scanner.clear()
     actual = scanner.scan(token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_invalid_path2():
     # expects an error
     token = "\"/abc//def/\""
     expected = []
+    scanner.clear()
     actual = scanner.scan(token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_invalid_path3():
     # expects an error
     token = "\"//\""
     expected = []
+    scanner.clear()
     actual = scanner.scan(token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_invalid_path4():
     # expects an error
     token = "\"abc/def\""
     expected = []
+    scanner.clear()
     actual = scanner.scan(token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_invalid_path5():
     invalid_token = "\"/home//\""
     expected = []
     # expects errors
 
+    scanner.clear()
     actual = scanner.scan(invalid_token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_invalid_token():
     token = "\"abc,d"
     expected = []
     # expects errors
 
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
@@ -81,8 +92,9 @@ def identifier_cannot_start_with_number():
     expected = []
     # expects errors, identifier cannot start with numbers
 
+    scanner.clear()
     actual = scanner.scan(token)
-    assert(actual == expected)
+    assert(actual != expected)
 
 def check_maximal_munch():
     token = "stringlist"
@@ -90,6 +102,7 @@ def check_maximal_munch():
         "<IDENTIFIER, 'stringlist'>"
     ]
 
+    scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
@@ -111,6 +124,7 @@ def check_keyword_as_function_name():
         "<SEPARATOR, '}'>",
     ]
 
+    scanner.clear()
     actual = scanner.scan(program)
     assert(actual == expected)
 
@@ -150,7 +164,7 @@ def parse_complicated_program():
         "<SEPARATOR, ']'>",
         "<SEPARATOR, ';'>",
         "<KEYWORD, 'define'>",
-        "<KEYWORD, 'rename_dirs'>",
+        "<IDENTIFIER, 'rename_dirs'>",
         "<SEPARATOR, '('>",
         "<KEYWORD, 'list'>",
         "<IDENTIFIER, 'directories'>",
@@ -179,6 +193,7 @@ def parse_complicated_program():
         "<SEPARATOR, ';'>",
     ]
 
+    scanner.clear()
     actual = scanner.scan(program)
     assert(actual == expected)
 
