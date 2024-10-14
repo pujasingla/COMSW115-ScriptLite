@@ -46,7 +46,7 @@ class Scanner:
                         self.add_tokens('IDENTIFIER', lexeme)
                     continue
 
-                # String or Path State
+                # String State
                 elif c == '"':
                     token_start = self.cursor
                     self.advance()
@@ -55,10 +55,7 @@ class Scanner:
                     if self.cursor < line_length:
                         self.advance()
                         lexeme = line[token_start:self.cursor]
-                        if lexeme.startswith('"/') and lexeme.endswith('"'):
-                            self.add_tokens('PATH', lexeme)
-                        else:
-                            self.add_tokens('STRING', lexeme)
+                        self.add_tokens('STRING', lexeme)
                     else:
                         self.errors.append(f"Lexical error: unclosed string or file path at position {token_start}")
                     continue
@@ -99,7 +96,7 @@ if __name__ == "__main__":
         BULK_RENAME_FILES file IN directories TO prefix + file;
     }
 
-    CALL bulk_rename_files(directories);
+    CALL bulk_rename_files(directories);    
     '''
 
     scanner = Scanner()
