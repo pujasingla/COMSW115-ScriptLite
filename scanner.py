@@ -1,3 +1,5 @@
+import sys
+
 class Scanner:
     def __init__(self):
         self.cursor = 0
@@ -57,7 +59,7 @@ class Scanner:
                         lexeme = line[token_start:self.cursor]
                         self.add_tokens('STRING', lexeme)
                     else:
-                        self.errors.append(f"Lexical error: unclosed string or file path at position {token_start}")
+                        self.errors.append(f"Lexical error: unclosed string at position {token_start}")
                     continue
 
                 # Separator State
@@ -85,19 +87,18 @@ class Scanner:
 
 
 if __name__ == "__main__":
-    program = '''
-    PATH directory1 = "/user/Desktop";
-    PATH directory2 = "/home/user/Documents";
-    LIST directories = [directory1, directory2];
+    if len(sys.argv) != 2:
+        print("Argument missing: python scanner.py <input_program_file>")
+        sys.exit(1)
 
-    DEFINE bulk_rename_files (LIST directories)
-    {
-        STRING prefix = "prefix";
-        BULK_RENAME_FILES file IN directories TO prefix + file;
-    }
+    input_file = sys.argv[1]
 
-    CALL bulk_rename_files(directories);    
-    '''
+    try:
+        with open(input_file, 'r') as file:
+            program = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        sys.exit(1)
 
     scanner = Scanner()
     output = scanner.scan(program)

@@ -1,0 +1,11 @@
+PATH directory1 = "/user/Desktop";
+PATH directory2 = "/home/user/Documents";
+LIST directories = [directory1, directory2];
+
+DEFINE bulk_rename_files (LIST directories)
+{
+    STRING prefix = "prefix";
+    BULK_RENAME_FILES file IN directories TO prefix + file;
+}
+
+CALL bulk_rename_files(directories);
