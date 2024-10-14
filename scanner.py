@@ -9,6 +9,7 @@ class Scanner:
     def clear(self):
         #For testing purposes
         self.tokens = []
+        self.errors = []
 
     def advance(self):
         self.cursor += 1
@@ -18,9 +19,14 @@ class Scanner:
 
     def add_tokens(self, token_type, token_value):
         self.tokens.append((token_type, token_value))
+    
+    def get_errors(self):
+        return self.errors
 
     def scan(self, program):
-        keywords = {'path', 'list', 'define', 'call', 'in', 'to', 'string', 'bulk_rename_files', 'create_directory', 'copy_files', 'sync_files', 'display_files'}
+        keywords = {'path', 'list', 'define', 'call', 'in', 'to', 'string', 
+                    'bulk_rename_files', 'create_directory', 'copy_files', 
+                    'sync_files', 'display_files', 'ends_with', 'not', 'where'}
         separators = "();,{}[]"
         operators = "+="
 
