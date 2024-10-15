@@ -1,0 +1,11 @@
+string directory1 = "/user/Desktop";
+string directory2 = "/home/user/Documents";
+list directories = [directory1, directory2];
+string prefix = "prefix";
+
+define rename_files_in_dirs (list directories, string prefix)
+{
+    bulk_rename_files file IN directories TO prefix + file;
+}
+
+call rename_files_in_dirs(directories);

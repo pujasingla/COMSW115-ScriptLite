@@ -26,7 +26,8 @@ class Scanner:
     def scan(self, program):
         keywords = {'path', 'list', 'define', 'call', 'in', 'to', 'string', 
                     'bulk_rename_files', 'create_directory', 'copy_files', 
-                    'sync_files', 'display_files', 'ends_with', 'not', 'where'}
+                    'sync_files', 'display_files', 'ends_with', 'not', 'where',
+                    'append', 'get_files', 'foreach'}
         separators = "();,{}[]"
         operators = "+="
 
