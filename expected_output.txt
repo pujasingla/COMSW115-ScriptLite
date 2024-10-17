@@ -1,0 +1,362 @@
+## Following are the expected outputs after running the lexer
+
+#Output for program in add_copyright_to_directories.txt
+
+Running the lexer...
+<KEYWORD, 'list'>
+<IDENTIFIER, 'directories'>
+<OPERATOR, '='>
+<SEPARATOR, '['>
+<STRING, '"/user/Docs"'>
+<SEPARATOR, ','>
+<STRING, '"/user/Projects"'>
+<SEPARATOR, ','>
+<STRING, '"/user/Reports"'>
+<SEPARATOR, ']'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'copyright_notice'>
+<OPERATOR, '='>
+<STRING, '"\n\n© 2024 Your Company. All rights reserved."'>
+<SEPARATOR, ';'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'append_copyright_to_file'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'file_path'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'append'>
+<IDENTIFIER, 'copyright_notice'>
+<KEYWORD, 'to'>
+<IDENTIFIER, 'file_path'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'append_copyright_to_directory'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'directory'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'list'>
+<IDENTIFIER, 'all_files'>
+<OPERATOR, '='>
+<KEYWORD, 'get_files'>
+<IDENTIFIER, 'directory'>
+<SEPARATOR, ';'>
+<KEYWORD, 'foreach'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'all_files'>
+<SEPARATOR, '{'>
+<IDENTIFIER, 'append_copyright_to_file'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'directory'>
+<OPERATOR, '+'>
+<STRING, '"/"'>
+<OPERATOR, '+'>
+<IDENTIFIER, 'file'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<SEPARATOR, '}'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'append_copyright_to_multiple_directories'>
+<SEPARATOR, '('>
+<KEYWORD, 'list'>
+<IDENTIFIER, 'directories'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'foreach'>
+<IDENTIFIER, 'directory'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'directories'>
+<SEPARATOR, '{'>
+<IDENTIFIER, 'append_copyright_to_directory'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'directory'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<SEPARATOR, '}'>
+<KEYWORD, 'call'>
+<IDENTIFIER, 'append_copyright_to_multiple_directories'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'directories'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'copyright_notice'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+Lexer executed successfully.
+
+
+
+#Output for program in adding_newfile(errors_included).txt
+
+Running the lexer...
+<KEYWORD, 'create_directory'>
+<KEYWORD, 'display_files'>
+<STRING, '"tasks"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'file_name'>
+<OPERATOR, '='>
+<STRING, '"todo_list.txt"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'create_new_file'>
+<SEPARATOR, ';'>
+<KEYWORD, 'add_content'>
+<STRING, '"finish programming assignment"'>
+<KEYWORD, 'to'>
+<SEPARATOR, ';'>
+Lexical error: unclosed string at position 17
+Lexical error at position 18: invalid character '$'
+Error: Identifiers cannot start with a number at line 4, position 16
+Error: Identifiers cannot start with a number at line 5, position 47
+Lexer executed successfully.
+
+
+
+#Output for program in bulk_rename_files(errors_included).txt
+
+Running the lexer...
+<KEYWORD, 'string'>
+<IDENTIFIER, 'directory1'>
+<OPERATOR, '='>
+<STRING, '"/user/Desktop"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'directory2'>
+<OPERATOR, '='>
+<KEYWORD, 'list'>
+<IDENTIFIER, 'directories'>
+<OPERATOR, '='>
+<SEPARATOR, '['>
+<IDENTIFIER, 'directory1'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'directory2'>
+<SEPARATOR, ']'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'prefix'>
+<OPERATOR, '='>
+<STRING, '"prefix"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'rename_files_in_dirs'>
+<SEPARATOR, '('>
+<KEYWORD, 'list'>
+<IDENTIFIER, 'directories'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'prefix'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'bulk_rename_files'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'IN'>
+<IDENTIFIER, 'directories'>
+<KEYWORD, 'TO'>
+<IDENTIFIER, 'prefix'>
+<OPERATOR, '+'>
+<IDENTIFIER, 'file'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'call'>
+<IDENTIFIER, 'rename_files_in_dirs'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'directories'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+Lexical error: unclosed string at position 20
+Lexical error at position 54: invalid character '#'
+Lexer executed successfully.
+
+
+#Output for program in backup_log_files.txt
+
+Running the lexer...
+<KEYWORD, 'string'>
+<IDENTIFIER, 'dest_dir'>
+<OPERATOR, '='>
+<STRING, '"/home/backup"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'create_directory'>
+<IDENTIFIER, 'dest_dir'>
+<SEPARATOR, ';'>
+<KEYWORD, 'display_files'>
+<STRING, '"/home/backup"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'src_dir'>
+<OPERATOR, '='>
+<STRING, '"/home/usr"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'copy_files'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'src_dir'>
+<KEYWORD, 'ends_with'>
+<STRING, '".log"'>
+<KEYWORD, 'to'>
+<IDENTIFIER, 'dest_dir'>
+<SEPARATOR, ';'>
+<KEYWORD, 'display_files'>
+<IDENTIFIER, 'dest_dir'>
+<SEPARATOR, ';'>
+Lexer executed successfully.
+
+
+#Output for program in organize_files_by_extension.txt
+
+
+Running the lexer...
+<KEYWORD, 'string'>
+<IDENTIFIER, 'source_directory'>
+<OPERATOR, '='>
+<STRING, '"/user/Downloads"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '='>
+<STRING, '"/user/Organized"'>
+<SEPARATOR, ';'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'organize_jpg_files'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'create_directory'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/jpg_files"'>
+<SEPARATOR, ';'>
+<IDENTIFIER, 'move_files'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'source_directory'>
+<IDENTIFIER, 'endswith'>
+<STRING, '".jpg"'>
+<KEYWORD, 'to'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/jpg_files"'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'organize_pdf_files'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'create_directory'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/pdf_files"'>
+<SEPARATOR, ';'>
+<IDENTIFIER, 'move_files'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'source_directory'>
+<IDENTIFIER, 'endswith'>
+<STRING, '".pdf"'>
+<KEYWORD, 'to'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/pdf_files"'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'organize_docx_files'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<KEYWORD, 'create_directory'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/docx_files"'>
+<SEPARATOR, ';'>
+<IDENTIFIER, 'move_files'>
+<IDENTIFIER, 'file'>
+<KEYWORD, 'in'>
+<IDENTIFIER, 'source_directory'>
+<IDENTIFIER, 'endswith'>
+<STRING, '".docx"'>
+<KEYWORD, 'to'>
+<IDENTIFIER, 'target_directory'>
+<OPERATOR, '+'>
+<STRING, '"/docx_files"'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'define'>
+<IDENTIFIER, 'organize_all_files'>
+<SEPARATOR, '('>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<KEYWORD, 'string'>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, '{'>
+<IDENTIFIER, 'organize_jpg_files'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+<IDENTIFIER, 'organize_pdf_files'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+<IDENTIFIER, 'organize_docx_files'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+<SEPARATOR, '}'>
+<KEYWORD, 'call'>
+<IDENTIFIER, 'organize_all_files'>
+<SEPARATOR, '('>
+<IDENTIFIER, 'source_directory'>
+<SEPARATOR, ','>
+<IDENTIFIER, 'target_directory'>
+<SEPARATOR, ')'>
+<SEPARATOR, ';'>
+Lexer executed successfully.
+
+
+
