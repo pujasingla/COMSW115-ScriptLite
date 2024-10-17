@@ -19,21 +19,21 @@ class Scanner:
 
     def add_tokens(self, token_type, token_value):
         self.tokens.append((token_type, token_value))
-    
-    def get_errors(self):
-        return self.errors
 
     def scan(self, program):
         keywords = {'path', 'list', 'define', 'call', 'in', 'to', 'string', 
                     'bulk_rename_files', 'create_directory', 'copy_files', 
                     'sync_files', 'display_files', 'ends_with', 'not', 'where',
-                    'append', 'get_files', 'foreach'}
+                    'append', 'get_files', 'foreach', 'create_new_file', 'add_content'}
         separators = "();,{}[]"
         operators = "+="
+
+        line_number=0
 
         for line in program.split("\n"):
             self.reset_cursor()
             line_length = len(line)
+            line_number+=1
 
             while self.cursor < line_length:
                 c = line[self.cursor]
@@ -44,7 +44,7 @@ class Scanner:
                     continue
 
                 # Identifier/Keyword State
-                elif c.isalpha() or c == '_':
+                elif c.isalnum() or c == '_':
                     token_start = self.cursor
                     while self.cursor < line_length and (line[self.cursor].isalnum() or line[self.cursor] == '_'):
                         self.advance()
@@ -52,7 +52,11 @@ class Scanner:
                     if lexeme.lower() in keywords:
                         self.add_tokens('KEYWORD', lexeme)
                     else:
-                        self.add_tokens('IDENTIFIER', lexeme)
+                        if line[token_start].isdigit():
+                            self.errors.append(
+                                f"Error: Identifiers cannot start with a number at line {line_number}, position {token_start}")
+                        else:
+                            self.add_tokens('IDENTIFIER', lexeme)
                     continue
 
                 # String State
@@ -90,12 +94,12 @@ class Scanner:
         for tkn in self.tokens:
             output.append('<' + tkn[0] + ', \'' + tkn[1] + '\'>')
 
-        return output
+        return output, self.errors
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Argument missing: python scanner.py <input_program_file>")
+        print("Argument missing: python3 scanner.py <input_file>")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -108,10 +112,10 @@ if __name__ == "__main__":
         sys.exit(1)
 
     scanner = Scanner()
-    output = scanner.scan(program)
+    tokens, errors = scanner.scan(program)
 
-    for token in output:
+    for token in tokens:
         print(token)
 
-    for error in scanner.errors:
+    for error in errors:
         print(error)
