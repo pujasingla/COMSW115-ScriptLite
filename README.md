@@ -123,7 +123,7 @@ analyzed. The main states can be summarized as follows:
 
 ### Error Handling
 
-The scanner catches three main types of errors: invalid characters that do not
+- The scanner catches three main types of errors: invalid characters that do not
 conform to any recognized token types, identifiers starting with numbers and unclosed string literals. When an
 invalid character is encountered, it logs a lexical error message indicating
 the character's position and type, allowing the scanner to continue processing
@@ -166,7 +166,7 @@ After installation, verify that Python was installed correctly by running:
 python3 --version
 ```
 ---
-## Executing Shell Script
+## Executing Shell Script (5 Example Programs)
 To make the script executable, run the following command:
 
 ```bash
