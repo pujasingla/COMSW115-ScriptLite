@@ -6,35 +6,35 @@ def check_valid_path1():
     token = "\"/abc/def\""
     expected = ["<STRING, '\"/abc/def\"'>",]
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path2():
     token = "\"/hello_123/world-456\""
     expected = ["<STRING, '\"/hello_123/world-456\"'>",]
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path3():
     token = "\"/\""
     expected = ["<STRING, '\"/\"'>",]
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_filepath():
     token = "\"/abc/def/file.txt\""
     expected = ["<STRING, '\"/abc/def/file.txt\"'>",]
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_string_against_path():
     token = "\"invalid\""
     expected = ["<STRING, '\"invalid\"'>",]
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_unclosed_string1():
@@ -43,9 +43,9 @@ def check_unclosed_string1():
     # expects errors
 
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
-    assert(len(scanner.get_errors()) == 1)
+    assert(len(errors) == 1)
 
 def check_unclosed_string2():
     token = "abc,d\""
@@ -53,34 +53,34 @@ def check_unclosed_string2():
     # expects errors
 
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
-    assert(len(scanner.get_errors()) == 1)
+    assert(len(errors) == 1)
 
 def check_unclosed_brackets():
     token = "define f(string dir {"
-    expected = ["<KEYWORD, 'define'>", 
-                "<IDENTIFIER, 'f'>", 
-                "<SEPARATOR, '('>", 
-                "<KEYWORD, 'string'>", 
-                "<IDENTIFIER, 'dir'>", 
+    expected = ["<KEYWORD, 'define'>",
+                "<IDENTIFIER, 'f'>",
+                "<SEPARATOR, '('>",
+                "<KEYWORD, 'string'>",
+                "<IDENTIFIER, 'dir'>",
                 "<SEPARATOR, '{'>"]
     # expects syntax errors but not lexical errors
 
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
-    assert(len(scanner.get_errors()) == 0)
+    assert(len(errors) == 0)
 
 def identifier_cannot_start_with_number():
     token = "123a"
-    expected = ["<IDENTIFIER, 'a'>"]
+    expected = []
     # expects errors, identifier cannot start with numbers
 
     scanner.clear()
-    actual = scanner.scan(token)
-    assert(actual == expected)
-    assert(len(scanner.get_errors()) > 0)
+    actual,errors = scanner.scan(token)
+    assert (actual == expected)
+    assert(len(errors) > 0)
 
 def check_maximal_munch():
     token = "stringlist"
@@ -89,7 +89,7 @@ def check_maximal_munch():
     ]
 
     scanner.clear()
-    actual = scanner.scan(token)
+    actual,errors = scanner.scan(token)
     assert(actual == expected)
 
 def check_keyword_as_function_name():
@@ -111,7 +111,7 @@ def check_keyword_as_function_name():
     ]
 
     scanner.clear()
-    actual = scanner.scan(program)
+    actual,errors = scanner.scan(program)
     assert(actual == expected)
 
 def parse_complicated_program():
@@ -120,7 +120,7 @@ def parse_complicated_program():
         path directory2 = "/home/Documents";
         list directories = [directory1, directory2];
 
-        define rename_dirs(list directories) 
+        define rename_dirs(list directories)
         {
         string prefix = "prefix";
         bulk_rename_files file in directories to prefix+file;
@@ -180,7 +180,7 @@ def parse_complicated_program():
     ]
 
     scanner.clear()
-    actual = scanner.scan(program)
+    actual,errors = scanner.scan(program)
     assert(actual == expected)
 
 

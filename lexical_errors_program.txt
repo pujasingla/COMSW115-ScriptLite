@@ -1,4 +1,0 @@
-string _i_am_ok = "I'm ok";
-string 123cannot_start_with_number = "I start with number";
-string unclosed_str = "I am unclosed oops;
-list illegal-friends = [_i_am_ok, 123cannot_start_with_number, unclosed_str, "what am I doing here"]

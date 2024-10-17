@@ -1,0 +1,5 @@
+create_directory "tasks;
+display_files "tasks";
+string file_name= $"todo.txt";
+create_new_file 12file_name;
+add_content "finish programming assignment" to 12file_name;
