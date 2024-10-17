@@ -4,28 +4,28 @@ scanner = Scanner()
 
 def check_valid_path1():
     token = "\"/abc/def\""
-    expected = ["<PATH, '\"/abc/def\"'>",]
+    expected = ["<STRING, '\"/abc/def\"'>",]
     scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path2():
     token = "\"/hello_123/world-456\""
-    expected = ["<PATH, '\"/hello_123/world-456\"'>",]
+    expected = ["<STRING, '\"/hello_123/world-456\"'>",]
     scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_path3():
     token = "\"/\""
-    expected = ["<PATH, '\"/\"'>",]
+    expected = ["<STRING, '\"/\"'>",]
     scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
 
 def check_valid_filepath():
     token = "\"/abc/def/file.txt\""
-    expected = ["<PATH, '\"/abc/def/file.txt\"'>",]
+    expected = ["<STRING, '\"/abc/def/file.txt\"'>",]
     scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
@@ -37,48 +37,7 @@ def check_string_against_path():
     actual = scanner.scan(token)
     assert(actual == expected)
 
-def check_invalid_path1():
-    # expects an error
-    token = "\"/abc/def/\""
-    expected = []
-    scanner.clear()
-    actual = scanner.scan(token)
-    assert(actual != expected)
-
-def check_invalid_path2():
-    # expects an error
-    token = "\"/abc//def/\""
-    expected = []
-    scanner.clear()
-    actual = scanner.scan(token)
-    assert(actual != expected)
-
-def check_invalid_path3():
-    # expects an error
-    token = "\"//\""
-    expected = []
-    scanner.clear()
-    actual = scanner.scan(token)
-    assert(actual != expected)
-
-def check_invalid_path4():
-    # expects an error
-    token = "\"abc/def\""
-    expected = []
-    scanner.clear()
-    actual = scanner.scan(token)
-    assert(actual != expected)
-
-def check_invalid_path5():
-    invalid_token = "\"/home//\""
-    expected = []
-    # expects errors
-
-    scanner.clear()
-    actual = scanner.scan(invalid_token)
-    assert(actual != expected)
-
-def check_invalid_token():
+def check_unclosed_string1():
     token = "\"abc,d"
     expected = []
     # expects errors
@@ -86,15 +45,42 @@ def check_invalid_token():
     scanner.clear()
     actual = scanner.scan(token)
     assert(actual == expected)
+    assert(len(scanner.get_errors()) == 1)
+
+def check_unclosed_string2():
+    token = "abc,d\""
+    expected = ["<IDENTIFIER, 'abc'>", "<SEPARATOR, ','>", "<IDENTIFIER, 'd'>"]
+    # expects errors
+
+    scanner.clear()
+    actual = scanner.scan(token)
+    assert(actual == expected)
+    assert(len(scanner.get_errors()) == 1)
+
+def check_unclosed_brackets():
+    token = "define f(string dir {"
+    expected = ["<KEYWORD, 'define'>", 
+                "<IDENTIFIER, 'f'>", 
+                "<SEPARATOR, '('>", 
+                "<KEYWORD, 'string'>", 
+                "<IDENTIFIER, 'dir'>", 
+                "<SEPARATOR, '{'>"]
+    # expects syntax errors but not lexical errors
+
+    scanner.clear()
+    actual = scanner.scan(token)
+    assert(actual == expected)
+    assert(len(scanner.get_errors()) == 0)
 
 def identifier_cannot_start_with_number():
     token = "123a"
-    expected = []
+    expected = ["<IDENTIFIER, 'a'>"]
     # expects errors, identifier cannot start with numbers
 
     scanner.clear()
     actual = scanner.scan(token)
-    assert(actual != expected)
+    assert(actual == expected)
+    assert(len(scanner.get_errors()) > 0)
 
 def check_maximal_munch():
     token = "stringlist"
@@ -147,12 +133,12 @@ def parse_complicated_program():
         "<KEYWORD, 'path'>",
         "<IDENTIFIER, 'directory1'>",
         "<OPERATOR, '='>",
-        "<PATH, '\"/home/Desktop\"'>",
+        "<STRING, '\"/home/Desktop\"'>",
         "<SEPARATOR, ';'>",
         "<KEYWORD, 'path'>",
         "<IDENTIFIER, 'directory2'>",
         "<OPERATOR, '='>",
-        "<PATH, '\"/home/Documents\"'>",
+        "<STRING, '\"/home/Documents\"'>",
         "<SEPARATOR, ';'>",
         "<KEYWORD, 'list'>",
         "<IDENTIFIER, 'directories'>",
@@ -202,14 +188,11 @@ def test_all():
     check_valid_path1()
     check_valid_path2()
     check_valid_path3()
-    # check_valid_filepath()
+    check_valid_filepath()
     check_string_against_path()
-    check_invalid_path1()
-    check_invalid_path2()
-    check_invalid_path3()
-    check_invalid_path4()
-    check_invalid_path5()
-    check_invalid_token()
+    check_unclosed_string1()
+    check_unclosed_string2()
+    check_unclosed_brackets()
     identifier_cannot_start_with_number()
     check_maximal_munch()
     check_keyword_as_function_name()
