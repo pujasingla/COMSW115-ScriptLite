@@ -10,8 +10,8 @@ class ASTNode:
     def add_child(self, child):
         self.children.append(child)
     
-    def __repr__(self, level=0):
-        ret = " " * level + "|" + "─" * level + f"{self.type} ({self.value if self.value else ''})\n"
+    def __repr__(self, level = 0):
+        ret = "  " * level + "├" + "── " + f"{self.type} ({self.value if self.value else ''})\n"
         for child in self.children:
             ret += child.__repr__(level + 1)
         return ret
@@ -32,9 +32,6 @@ class Parser:
     
     def advance(self):
         self.pos += 1
-    
-    def roll_back(self):
-        self.pos -= 1
     
     def print_err(self):
         print(f"Syntax error at token {self.current_token()}")
@@ -112,7 +109,6 @@ class Parser:
             node = self.parse_list()
             if node:
                 root.add_child(node)
-                self.advance()
             else:
                 return
 
@@ -145,23 +141,93 @@ class Parser:
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()       
             else:
-                self.print_err()
                 return  
             return root
         else:
-            self.print_err()
             return
     
     def parse_function(self):
-        return
+        root = ASTNode("FUNCTION")
+        node = self.parse_function_header()
+        if node:
+            root.add_child(node)
+        else:
+            return
+        
+        # TODO: continue to parse block
+        return root
     
-    def parse_block(self):
-        return
+    def parse_function_header(self):
+        root = ASTNode('FUNC_HEADER')
+        if self.match('KEYWORD', 'define'):
+            root.add_child(ASTNode('KEYWORD', "define"))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.declared_functions.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+            
+            node = self.parse_param_list()
+            if node:
+                root.add_child(node)
+            else:
+                return
+
+            return root
     
     def parse_param_list(self):
-        return
+        root = ASTNode('PARAMETER_LIST')
+        if self.match('SEPARATOR', '('):
+            root.add_child(ASTNode('SEPARATOR', '('))
+            self.advance()
+            
+            while self.current_token() and self.current_token()[1] != ')':
+                node = self.parse_parameter()
+                if node:
+                    root.add_child(node)
+                if self.current_token()[1] == ')':
+                    root.add_child(ASTNode('SEPARATOR', ')'))
+                    self.advance()
+                    break
+                if self.match('SEPARATOR', ','):
+                    root.add_child(ASTNode('SEPARATOR', ','))
+                    self.advance()
+            else:
+                return
+            
+            return root
     
-    def parse_parameters(self):
+    def parse_parameter(self):
+        root = ASTNode('PARAMETER')
+        if self.match('KEYWORD', 'string'):
+            root.add_child(ASTNode('KEYWORD', "string"))
+            self.advance()
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+
+        elif self.match('KEYWORD', 'list'):
+            root.add_child(ASTNode('KEYWORD', 'list'))
+            self.advance()
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.declared_lists.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+        else:
+            return
+
+        return root
+            
+    def parse_block(self):
+        # TODO: think about variable scope&type here, maybe pop local var out when done?
         return
     
     def parse_statement(self):
