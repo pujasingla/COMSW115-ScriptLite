@@ -197,16 +197,20 @@ class Parser:
         if self.match('SEPARATOR', '('):
             root.add_child(ASTNode('SEPARATOR', '('))
             self.advance()
-            
             while self.current_token() and self.current_token()[1] != ')':
                 node = self.parse_parameter()
+                expecting_parameter = False
                 if node:
                     root.add_child(node)
+
                 if self.match('SEPARATOR', ','):
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()
+                    expecting_parameter = True
                 else:
                     break
+            if expecting_parameter:
+                raise SyntaxError("Syntax Error: Trailing ',' with no parameter")
 
         else:
             return
@@ -519,23 +523,28 @@ class Parser:
         if self.match('SEPARATOR', '('):
             root.add_child(ASTNode('SEPARATOR', '('))
             self.advance()
+            expecting_argument = True
 
             while self.current_token() and self.current_token()[1] != ')':
                 if self.match('IDENTIFIER'):
                     root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
                     self.declared_strings.add(self.current_token()[1])
                     self.advance()
+                    expecting_argument = False
 
                 if self.current_token()[1] == ')':
                     break
                 if self.match('SEPARATOR', ','):
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()
+                    expecting_argument = True
+            if expecting_argument:
+                raise SyntaxError("Syntax Error: Trailing ',' with no argument")
 
-            self.match('SEPARATOR', ')')
-            root.add_child(ASTNode('SEPARATOR', ')'))
-            self.advance()
-            return root
+        self.match('SEPARATOR', ')')
+        root.add_child(ASTNode('SEPARATOR', ')'))
+        self.advance()
+        return root
 
     def parse_foreach(self):
         root = ASTNode('FOREACH')
@@ -572,11 +581,17 @@ class Parser:
 
 if __name__ == "__main__":
     sample_program = """
-    create_directory "tasks";
-    display_files "tasks";
-    string file_name= "todo_list.txt";
-    create_new_file file_name;
-    add_content "finish programming assignment" to file_name;
+    string directory1 = "/user/Desktop";
+    string directory2 = "/home/user/Documents";
+    list directories = [directory1, directory2];
+    string prefix = "prefix";
+    
+    define rename_files_in_dirs (list directories, string prefix)
+    {
+        bulk_rename_files file in directories to prefix + file;
+    }
+    
+    call rename_files_in_dirs(directories);
     """
 
     # Run the scanner
