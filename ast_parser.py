@@ -122,7 +122,9 @@ class Parser:
 
         if self.match('SEPARATOR', ';'):
             root.add_child(ASTNode('SEPARATOR', ';'))
-            self.advance()    
+            self.advance()
+        else:
+            self.print_err()
         
         return root
     
@@ -137,7 +139,6 @@ class Parser:
                 elif self.match('IDENTIFIER') and self.current_token()[1] in self.declared_strings:
                     root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
                 else:
-                    print("noo", self.current_token())
                     self.print_err()
                     return
                 self.advance()
@@ -149,10 +150,16 @@ class Parser:
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()       
             else:
-                return  
-            return root
+                return
+        elif self.match('KEYWORD', 'get_files'):
+            root.add_child(ASTNode('KEYWORD', 'get_files'))
+            self.advance()
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
         else:
             return
+        return root
     
     def parse_function(self):
         root = ASTNode("FUNCTION")
@@ -268,7 +275,7 @@ class Parser:
 
     def parse_statement(self):
         root = ASTNode('STATEMENT')
-        acceptable_keywords_type_1 = ['create_directory', 'display_files', 'create_new_files']
+        acceptable_keywords_type_1 = ['create_directory','display_files', 'create_new_file','get_files']
         acceptable_keywords_type_2 = ['move_files', 'copy_files']
         if self.match_values('KEYWORD', acceptable_keywords_type_1):
             root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
@@ -402,8 +409,6 @@ class Parser:
             else:
                 return
             root.add_child(self.parse_expression())
-
-
 
         else:
             raise SyntaxError(f"Syntax error at {self.current_token()[1]}")
@@ -567,12 +572,11 @@ class Parser:
 
 if __name__ == "__main__":
     sample_program = """
-    string dest_dir = "/home/backup";
-    create_directory dest_dir;
-    display_files "/home/backup";
-    string src_dir = "/home/usr";
-    copy_files file in src_dir ends_with ".log" to dest_dir; 
-    display_files dest_dir;
+    create_directory "tasks";
+    display_files "tasks";
+    string file_name= "todo_list.txt";
+    create_new_file file_name;
+    add_content "finish programming assignment" to file_name;
     """
 
     # Run the scanner
