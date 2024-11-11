@@ -1,0 +1,31 @@
+string source_directory = "/user/Downloads";
+string target_directory_jpg = "/user/Organized/jpg_files";
+string target_directory_pdf = "/user/Organized/pdf_files";
+string target_directory_docx = "/user/Organized/docx_files";
+
+define organize_jpg_files (string source_directory, string target_directory)
+{
+    create_directory target_directory_jpg;
+    move_files file in source_directory ends_with ".jpg" to target_directory_jpg;
+}
+
+define organize_pdf_files (string source_directory, string target_directory)
+{
+    create_directory target_directory_pdf;
+    move_files file in source_directory ends_with ".pdf" to target_directory_pdf;
+}
+
+define organize_docx_files (string source_directory, string target_directory)
+{
+    create_directory target_directory_docx;
+    move_files file in source_directory ends_with ".docx" to target_directory_docx;
+}
+
+define organize_all_files (string source_directory, string target_directory_pdf, string target_directory_jpg, string target_directory_docx)
+{
+    call organize_jpg_files(source_directory, target_directory_jpg);
+    call organize_pdf_files(source_directory, target_directory_pdf);
+    call organize_docx_files(source_directory, target_directory_docx);
+}
+
+call organize_all_files(source_directory, target_directory_jpg, target_directory_pdf, target_directory_docx);

@@ -1,0 +1,24 @@
+list directories = ["/user/Docs", "/user/Projects", "/user/Reports"];
+string copyright_notice = "© 2024 Your Company. All rights reserved.";
+
+define append_copyright_to_file (string file_path, string copyright_notice)
+{
+    append copyright_notice to file_path;
+}
+
+define append_copyright_to_directory (string directory, string copyright_notice)
+{
+    list all_files = get_files directory;
+    foreach file in all_files {
+        call append_copyright_to_file(file, copyright_notice);
+    }
+}
+
+define append_copyright_to_multiple_directories (list directories, string copyright_notice)
+{
+    foreach directory in directories {
+        call append_copyright_to_directory(directory, copyright_notice);
+    }
+}
+
+call append_copyright_to_multiple_directories(directories, copyright_notice);

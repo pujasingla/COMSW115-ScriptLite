@@ -36,6 +36,14 @@ class Parser:
     def print_err(self):
         print(f"Syntax error at token {self.current_token()}")
 
+    def match_values(self, token_class, token_values = None):
+        if token_values is None:
+            token_values = []
+        if self.current_token() and self.current_token()[0] == token_class \
+            and (token_values == [] or self.current_token()[1] in token_values):
+            return self.current_token()
+        return None
+
     def match(self, token_class, token_value = None):
         if self.current_token() and self.current_token()[0] == token_class \
             and (token_value is None or self.current_token()[1] == token_value):
@@ -114,7 +122,9 @@ class Parser:
 
         if self.match('SEPARATOR', ';'):
             root.add_child(ASTNode('SEPARATOR', ';'))
-            self.advance()    
+            self.advance()
+        else:
+            self.print_err()
         
         return root
     
@@ -129,7 +139,6 @@ class Parser:
                 elif self.match('IDENTIFIER') and self.current_token()[1] in self.declared_strings:
                     root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
                 else:
-                    print("noo", self.current_token())
                     self.print_err()
                     return
                 self.advance()
@@ -141,10 +150,16 @@ class Parser:
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()       
             else:
-                return  
-            return root
+                return
+        elif self.match('KEYWORD', 'get_files'):
+            root.add_child(ASTNode('KEYWORD', 'get_files'))
+            self.advance()
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
         else:
             return
+        return root
     
     def parse_function(self):
         root = ASTNode("FUNCTION")
@@ -153,8 +168,7 @@ class Parser:
             root.add_child(node)
         else:
             return
-        
-        # TODO: continue to parse block
+        root.add_child(self.parse_block())
         return root
     
     def parse_function_header(self):
@@ -176,29 +190,38 @@ class Parser:
             else:
                 return
 
-            return root
+        return root
     
     def parse_param_list(self):
         root = ASTNode('PARAMETER_LIST')
         if self.match('SEPARATOR', '('):
             root.add_child(ASTNode('SEPARATOR', '('))
             self.advance()
-            
             while self.current_token() and self.current_token()[1] != ')':
                 node = self.parse_parameter()
+                expecting_parameter = False
                 if node:
                     root.add_child(node)
-                if self.current_token()[1] == ')':
-                    root.add_child(ASTNode('SEPARATOR', ')'))
-                    self.advance()
-                    break
+
                 if self.match('SEPARATOR', ','):
                     root.add_child(ASTNode('SEPARATOR', ','))
                     self.advance()
-            else:
-                return
+                    expecting_parameter = True
+                else:
+                    break
+            if expecting_parameter:
+                raise SyntaxError("Syntax Error: Trailing ',' with no parameter")
+
+        else:
+            return
+
+        if self.match('SEPARATOR', ')'):
+            root.add_child(ASTNode('SEPARATOR', ')'))
+            self.advance()
+        else:
+            return
             
-            return root
+        return root
     
     def parse_parameter(self):
         root = ASTNode('PARAMETER')
@@ -227,17 +250,333 @@ class Parser:
         return root
             
     def parse_block(self):
-        # TODO: think about variable scope&type here, maybe pop local var out when done?
-        return
-    
+        root = ASTNode('BLOCK')
+        if self.match('SEPARATOR', '{'):
+            root.add_child(ASTNode('SEPARATOR', '{'))
+            self.advance()
+            while self.current_token() and self.current_token()[1] != '}':
+                if self.match('KEYWORD', 'call'):
+                    root.add_child(self.parse_function_call())
+                    continue
+                if self.match('KEYWORD', 'string') or self.match('KEYWORD', 'list'):
+                    root.add_child(self.parse_declaration())
+                    continue
+                if self.match('KEYWORD', 'foreach'):
+                    root.add_child(self.parse_foreach())
+                    continue
+                else:
+                    root.add_child(self.parse_statement())
+        else:
+            raise SyntaxError("Syntax Error: Missing {")
+
+        if self.match('SEPARATOR', '}'):
+            root.add_child(ASTNode('SEPARATOR', '}'))
+            self.advance()
+        else:
+            raise SyntaxError("Syntax Error: Missing }")
+
+        return root
+
     def parse_statement(self):
-        return
-    
+        root = ASTNode('STATEMENT')
+        acceptable_keywords_type_1 = ['create_directory','display_files', 'create_new_file','get_files']
+        acceptable_keywords_type_2 = ['move_files', 'copy_files']
+        if self.match_values('KEYWORD', acceptable_keywords_type_1):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            elif self.match('STRING'):
+                root.add_child(ASTNode('STRING', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+
+        elif self.match_values('KEYWORD', acceptable_keywords_type_2):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('KEYWORD','in'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.current_token() and self.current_token()[1] == 'ends_with':
+                if self.match('KEYWORD', 'ends_with'):
+                    root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                    self.advance()
+                else:
+                    return
+
+                if self.match('STRING'):
+                    root.add_child(ASTNode('STRING', self.current_token()[1]))
+                    self.advance()
+                else:
+                    return
+
+            if self.match('KEYWORD','to'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+        elif self.match('KEYWORD', 'append'):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('KEYWORD', 'to'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+        elif self.match('KEYWORD', 'add_content'):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+
+            if self.match('STRING'):
+                root.add_child(ASTNode('STRING', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('KEYWORD', 'to'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            elif self.match('STRING'):
+                root.add_child(ASTNode('STRING', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+        elif self.match('KEYWORD', 'bulk_rename_files'):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('KEYWORD','in'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('KEYWORD','to'):
+                root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            root.add_child(self.parse_expression())
+
+        else:
+            raise SyntaxError(f"Syntax error at {self.current_token()[1]}")
+
+        if self.match('SEPARATOR', ';'):
+            root.add_child(ASTNode('SEPARATOR', ';'))
+        else:
+            raise SyntaxError(f"Missing semi-colon")
+        self.advance()
+
+        return root
+
     def parse_expression(self):
-        return
+        root = ASTNode('EXPRESSION')
+        if self.match('STRING'):
+            root.add_child(ASTNode('STRING', self.current_token()[1]))
+            self.advance()
+
+            if self.match('OPERATOR'):
+                root.add_child(ASTNode('OPERATOR', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+
+        elif self.match('IDENTIFIER'):
+            root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+            self.advance()
+
+            if self.match('OPERATOR'):
+                root.add_child(ASTNode('OPERATOR', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+
+        elif self.match('IDENTIFIER'):
+            root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+            self.advance()
+
+            if self.match('OPERATOR'):
+                root.add_child(ASTNode('OPERATOR', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            if self.match('STRING'):
+                root.add_child(ASTNode('STRING', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+        elif self.match('STRING'):
+            root.add_child(ASTNode('STRING', self.current_token()[1]))
+            self.advance()
+
+            if self.match('OPERATOR'):
+                root.add_child(ASTNode('OPERATOR', self.current_token()[1]))
+                self.advance()
+            else:
+                return
+            if self.match('STRING'):
+                root.add_child(ASTNode('STRING', self.current_token()[1]))
+                self.declared_strings.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+        else:
+            return
+
+        return root
     
     def parse_function_call(self):
-        return
+        root = ASTNode('FUNC_CALL')
+        if self.match('KEYWORD', 'call'):
+            root.add_child(ASTNode('KEYWORD', "call"))
+            self.advance()
+
+            if self.match('IDENTIFIER'):
+                root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                # self.declared_functions.add(self.current_token()[1])
+                self.advance()
+            else:
+                return
+
+            node = self.parse_argument_list()
+            if node:
+                root.add_child(node)
+
+        if self.match('SEPARATOR', ';'):
+            root.add_child(ASTNode('SEPARATOR', ';'))
+            self.advance()
+
+        return root
+
+    def parse_argument_list(self):
+        root = ASTNode('ARGUMENTS')
+        if self.match('SEPARATOR', '('):
+            root.add_child(ASTNode('SEPARATOR', '('))
+            self.advance()
+            expecting_argument = True
+
+            while self.current_token() and self.current_token()[1] != ')':
+                if self.match('IDENTIFIER'):
+                    root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                    self.declared_strings.add(self.current_token()[1])
+                    self.advance()
+                    expecting_argument = False
+
+                if self.current_token()[1] == ')':
+                    break
+                if self.match('SEPARATOR', ','):
+                    root.add_child(ASTNode('SEPARATOR', ','))
+                    self.advance()
+                    expecting_argument = True
+            if expecting_argument:
+                raise SyntaxError("Syntax Error: Trailing ',' with no argument")
+
+        self.match('SEPARATOR', ')')
+        root.add_child(ASTNode('SEPARATOR', ')'))
+        self.advance()
+        return root
+
+    def parse_foreach(self):
+        root = ASTNode('FOREACH')
+        if self.match('KEYWORD', 'foreach'):
+            root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+            self.advance()
+            while self.current_token():
+                if self.match('IDENTIFIER'):
+                    root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                    self.declared_functions.add(self.current_token()[1])
+                    self.advance()
+                    continue
+
+                if self.match('KEYWORD', 'in'):
+                    root.add_child(ASTNode('KEYWORD', self.current_token()[1]))
+                    self.advance()
+                    continue
+
+                if self.match('IDENTIFIER'):
+                    root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
+                    self.declared_functions.add(self.current_token()[1])
+                    self.advance()
+                    continue
+
+                if self.match('SEPARATOR', '{'):
+                    root.add_child(self.parse_block())
+                    break
+
+        else:
+            return
+
+        return root
 
 
 if __name__ == "__main__":
@@ -246,12 +585,12 @@ if __name__ == "__main__":
     string directory2 = "/home/user/Documents";
     list directories = [directory1, directory2];
     string prefix = "prefix";
-
-   define rename_files_in_dirs (list directories, string prefix)
-   {
-    bulk_rename_files file IN directories TO prefix + file;
-   }
-
+    
+    define rename_files_in_dirs (list directories, string prefix)
+    {
+        bulk_rename_files file in directories to prefix + file;
+    }
+    
     call rename_files_in_dirs(directories);
     """
 
