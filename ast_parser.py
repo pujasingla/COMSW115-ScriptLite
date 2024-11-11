@@ -1,3 +1,4 @@
+import os
 import sys
 import scanner
 
@@ -580,26 +581,23 @@ class Parser:
 
 
 if __name__ == "__main__":
-    sample_program = """
-    string directory1 = "/user/Desktop";
-    string directory2 = "/home/user/Documents";
-    list directories = [directory1, directory2];
-    string prefix = "prefix";
-    
-    define rename_files_in_dirs (list directories, string prefix)
-    {
-        bulk_rename_files file in directories to prefix + file;
-    }
-    
-    call rename_files_in_dirs(directories);
-    """
+    if len(sys.argv) != 2:
+        print("Argument missing: python3 ast_parser.py <input_file>")
+        sys.exit(1)
+
+    input_dir = "Parser_Input_Programs/"
+    input_file = os.path.join(input_dir, sys.argv[1])
+
+    try:
+        with open(input_file, 'r') as file:
+            program = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        sys.exit(1)
 
     # Run the scanner
     scanner = scanner.Scanner()
-    tokens, errors = scanner.scan(sample_program)
-
-    for token in tokens:
-        print(token)
+    tokens, errors = scanner.scan(program)
 
     if errors:
         for error in errors:
