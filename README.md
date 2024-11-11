@@ -60,6 +60,48 @@ Separators are characters used to separate tokens and denote the structure of th
 - **Examples**: `(`, `)`, `{`, `}`, `;`, `,`, `[`, `]`
 
 ---
+## ScriptLite Context Free Grammer
+The grammar defined below outlines the structure of the language, demonstrating how programs are constructed using various production rules.
+### Non-Terminals
+`Program`, `Declarations`, `Function_Header`, `Parameter_List`, `Parameter`, `Function_Call`, `Arguments`, `Block`, `Block_Statements`, `Statement`, `Expression`, `File_Handling`, `Files`, `CP`, `Foreach_statement`, `A`, `String`
+
+### Terminals
+`list`, `string`, `id`, `=`, `[`, `]`, `;`, `get_files`, `define`, `(`, `)`, `call`, `,`, `{`, `}`, `create_directory`, `display_files`, `create_new_file`, `add_content`, `to`, `append`, `bulk_rename_files`, `in`, `+`, `copy_files`, `move_files`, `ends_with`, `foreach`, `"`
+
+### Production Rules
+Program → Declarations Function_Header Function_Call | Statement
+
+Declarations → list id = [ id ]; | string id = String; | list id = get_files id;
+
+Function_Header → define id (Parameter_List) Block
+
+Parameter_List → ε | list id Parameter_List’ | string id Parameter
+
+Parameter → ε | , Parameter_List
+
+Function_Call → call id(Arguments);
+
+Arguments → id | ,Arguments | ε
+
+Block → { Block_Statements } | { }
+
+Block_Statements → Statement | Function_Call | Declarations | Foreach_statement
+
+Statement → create_directory A; | display_files A; | create_new_file A; | get_files A|  add_content String to A; | File_Handling | append id to id; | bulk_rename_files id in id to Expression; 
+
+Expression → A + A
+
+File_Handling → Files  id in id CP to id
+
+Files → copy_files | move_files
+
+CP → ends_with String | ε
+
+Foreach_statement → foreach id in id Block
+
+A → String | id
+
+String → “id”
 
 
 ## Description of the Scanner
