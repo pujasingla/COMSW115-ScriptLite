@@ -2,7 +2,7 @@
 
 Team Members: Puja Singla (ps3467), Ria Luo (xl3466)
 
-Video demo for parser (Programming 2): https://drive.google.com/file/d/14Eowv9yAQSn401B3Jn-2aXUW_2a-pLG2/view?usp=drive_link
+**Video demo for parser (Programming 2):** https://drive.google.com/file/d/14Eowv9yAQSn401B3Jn-2aXUW_2a-pLG2/view?usp=drive_link
 
 **ScriptLite** is a language designed to simplify file management with a clear, easy-to-understand syntax that abstracts away complex shell commands for users who may be less familiar with shell scripts. It supports basic file operation commands, such as creating new directories, moving files, and copying files, as well as more advanced operations like batch moving files, batch renaming files, backing up files, and syncing files. The goals of this language are to:
 
@@ -110,7 +110,7 @@ The program processes tokens from the scanner output and builds an Abstract Synt
 algorithm closely follows the production rule we defined above.
 
 ### Error Handling of Parser
-Error handling is done using SyntaxError exceptions when the expected token doesn't match the current token. This ensures the parser detects and reports syntax errors, such as missing or misplaced tokens (e.g., missing semicolons or unbalanced parentheses). Some examples:
+Error handling is done using SyntaxError exceptions when the expected token doesn't match the current token. This ensures the parser detects and reports syntax errors, such as missing or misplaced tokens (e.g., missing semicolons or unbalanced parentheses). Only the first syntax error will be reported and the parser will exit.Some examples:
 1. **Missing Semicolon:**
    ```plaintext
    string x = "hello"
