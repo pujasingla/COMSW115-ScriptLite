@@ -1,3 +1,4 @@
+import os
 import sys
 import scanner
 
@@ -32,9 +33,6 @@ class Parser:
     
     def advance(self):
         self.pos += 1
-    
-    def print_err(self):
-        print(f"Syntax error at token {self.current_token()}")
 
     def match_values(self, token_class, token_values = None):
         if token_values is None:
@@ -57,8 +55,8 @@ class Parser:
             if node:
                 root.add_child(node)
             else:
-                self.print_err()
-                break
+                raise SyntaxError(f"Syntax error at token {self.current_token()[1]}")
+
         return root
     
     def parse_next(self):
@@ -124,7 +122,7 @@ class Parser:
             root.add_child(ASTNode('SEPARATOR', ';'))
             self.advance()
         else:
-            self.print_err()
+            raise SyntaxError(f"Syntax error at token {self.current_token()[1]}")
         
         return root
     
@@ -139,8 +137,8 @@ class Parser:
                 elif self.match('IDENTIFIER') and self.current_token()[1] in self.declared_strings:
                     root.add_child(ASTNode('IDENTIFIER', self.current_token()[1]))
                 else:
-                    self.print_err()
-                    return
+                    raise SyntaxError(f"Syntax error at token {self.current_token()[1]}")
+
                 self.advance()
                 if self.current_token()[1] == ']':
                     root.add_child(ASTNode('SEPARATOR', ']'))
@@ -267,13 +265,13 @@ class Parser:
                 else:
                     root.add_child(self.parse_statement())
         else:
-            raise SyntaxError("Syntax Error: Missing {")
+            raise SyntaxError(f"Syntax error at token {self.current_token()[1]}")
 
         if self.match('SEPARATOR', '}'):
             root.add_child(ASTNode('SEPARATOR', '}'))
             self.advance()
         else:
-            raise SyntaxError("Syntax Error: Missing }")
+            raise SyntaxError(f"Syntax error at token {self.current_token()[1]}")
 
         return root
 
@@ -420,7 +418,7 @@ class Parser:
         if self.match('SEPARATOR', ';'):
             root.add_child(ASTNode('SEPARATOR', ';'))
         else:
-            raise SyntaxError(f"Missing semi-colon")
+            raise SyntaxError(f"Syntax error at {self.current_token()[1] if self.current_token() else 'EOF'}")
         self.advance()
 
         return root
@@ -514,7 +512,9 @@ class Parser:
 
         if self.match('SEPARATOR', ';'):
             root.add_child(ASTNode('SEPARATOR', ';'))
-            self.advance()
+        else:
+            raise SyntaxError(f"Syntax error at {self.current_token()[1] if self.current_token() else 'EOF'}")
+        self.advance()
 
         return root
 
@@ -580,26 +580,23 @@ class Parser:
 
 
 if __name__ == "__main__":
-    sample_program = """
-    string directory1 = "/user/Desktop";
-    string directory2 = "/home/user/Documents";
-    list directories = [directory1, directory2];
-    string prefix = "prefix";
-    
-    define rename_files_in_dirs (list directories, string prefix)
-    {
-        bulk_rename_files file in directories to prefix + file;
-    }
-    
-    call rename_files_in_dirs(directories);
-    """
+    if len(sys.argv) != 2:
+        print("Argument missing: python3 ast_parser.py <input_file>")
+        sys.exit(1)
+
+    input_dir = "Parser_Input_Programs/"
+    input_file = os.path.join(input_dir, sys.argv[1])
+
+    try:
+        with open(input_file, 'r') as file:
+            program = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        sys.exit(1)
 
     # Run the scanner
     scanner = scanner.Scanner()
-    tokens, errors = scanner.scan(sample_program)
-
-    for token in tokens:
-        print(token)
+    tokens, errors = scanner.scan(program)
 
     if errors:
         for error in errors:

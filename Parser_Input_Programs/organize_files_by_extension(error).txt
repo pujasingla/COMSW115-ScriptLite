@@ -3,7 +3,7 @@ string target_directory_jpg = "/user/Organized/jpg_files";
 string target_directory_pdf = "/user/Organized/pdf_files";
 string target_directory_docx = "/user/Organized/docx_files";
 
-define organize_jpg_files (string source_directory, string target_directory)
+define define organize_jpg_files (string source_directory, string target_directory)
 {
     create_directory target_directory_jpg;
     move_files file in source_directory ends_with ".jpg" to target_directory_jpg;
