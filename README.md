@@ -2,6 +2,8 @@
 
 Team Members: Puja Singla (ps3467), Ria Luo (xl3466)
 
+Video demo for parser (Programming 2): https://drive.google.com/file/d/14Eowv9yAQSn401B3Jn-2aXUW_2a-pLG2/view?usp=drive_link
+
 **ScriptLite** is a language designed to simplify file management with a clear, easy-to-understand syntax that abstracts away complex shell commands for users who may be less familiar with shell scripts. It supports basic file operation commands, such as creating new directories, moving files, and copying files, as well as more advanced operations like batch moving files, batch renaming files, backing up files, and syncing files. The goals of this language are to:
 
 1. **Simplify file management** for users unfamiliar with shell scripts, enabling them to perform complex file operations like batch-copying, syncing, and backups without the need for loops or extensive scripting.
@@ -103,6 +105,39 @@ A → String | id
 
 String → “id”
 
+### Parsing Algorithm
+The program processes tokens from the scanner output and builds an Abstract Syntax Tree (AST) by recursively analyzing the structure of the source code. It matches tokens based on their class (e.g., KEYWORD, IDENTIFIER, etc.), advancing through the tokens while constructing nodes in the AST. Each node represents a syntactic construct like a variable declaration, function call, or block of code. The recursive
+algorithm closely follows the production rule we defined above.
+
+### Error Handling of Parser
+Error handling is done using SyntaxError exceptions when the expected token doesn't match the current token. This ensures the parser detects and reports syntax errors, such as missing or misplaced tokens (e.g., missing semicolons or unbalanced parentheses). Some examples:
+1. **Missing Semicolon:**
+   ```plaintext
+   string x = "hello"
+   ```
+
+2. **Unexpected Token:**
+   ```plaintext
+   list y = ;
+   ```
+
+3. **Mismatched Parentheses in Function Call:**
+   ```plaintext
+   call print("hello", 
+   ```
+
+4. **Trailing Comma in Parameter List:**
+   ```plaintext
+   define myFunction(string x, string y, )
+   ```
+
+5. **Incorrect Block Closure:**
+   ```plaintext
+   if condition {
+       doSomething();
+   ```
+
+More examples can be found in the demo video linked at the top of README. 
 
 ## Description of the Scanner
 
