@@ -3,4 +3,4 @@ create_directory dest_dir;
 display_files "/home/backup";
 string src_dir = "/home/usr";
 copy_files file in src_dir ends_with ".log" to dest_dir;
-display_files dest_dir;
+display_files dest_dir

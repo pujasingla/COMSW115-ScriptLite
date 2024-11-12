@@ -211,10 +211,17 @@ python3 --version
 ## Executing Shell Script (5 Example Programs)
 To make the script executable, run the following command:
 
+Lexer:
 ```bash
 chmod +x run_lexer.sh
 ```
- Following are the description of each program and the command to execute the program. The expected output for each program is given in `expected_output.txt` file.
+
+Parser: 
+```bash
+chmod +x ast_parser.sh
+```
+
+ Following are the description of each program and the command to execute the program. The expected output for each program for scanner is given in `expected_output.txt` file.
 
 ### Add copyright to directories program
 
@@ -237,6 +244,9 @@ The program calls the `append_copyright_to_multiple_directories` function, which
 ```bash
 ./run_lexer.sh add_copyright_to_directories.txt  
 ```
+```bash
+./run_parser.sh adding_copyright_to_directories.txt   
+```
 
 ### Add new file program
 
@@ -250,6 +260,9 @@ This script performs basic file management tasks using the `ScriptLite` language
 
 ```bash
 ./run_lexer.sh adding_newfile\(errors_included\).txt
+```
+```bash
+./run_parser.sh adding_newfile.txt 
 ```
 
 ### Backup Log files program
@@ -265,12 +278,18 @@ This ScriptLite program is designed to facilitate basic file management tasks, s
 ```bash
 ./run_lexer.sh backup_log_files.txt
 ```
+```bash
+./run_parser.sh backup_log_files\(error\).txt 
+```
 ### Bulk Rename Files Program
 This ScriptLite program is designed to rename files in specified directories by adding a prefix to their original names. It starts by defining two directory paths, directory1 and directory2, which point to locations on a user's computer. It then creates a list named directories that includes these two directories.
 
 The core functionality is encapsulated in the function rename_files_in_dirs, which takes a list of directories and a string prefix as parameters. Inside this function, the command bulk_rename_files is called to rename all files in the specified directories by appending the given prefix to each file name. Finally, the program invokes the rename_files_in_dirs function, passing in the directories list and the desired prefix.
 ```bash
  ./run_lexer.sh bulk_rename_files\(errors_included\).txt
+```
+```bash
+ ./run_parser.sh bulk_rename_files\(error\).txt 
 ```
 
 ### Organize files by extension program
@@ -289,6 +308,9 @@ The program concludes by calling the `organize_all_files` function, passing the 
 
 ```bash
  ./run_lexer.sh organize_files_by_extension.txt
+```
+```bash
+ ./run_parser.sh organize_files_by_extension\(error\).txt 
 ```
 
 ---

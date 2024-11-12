@@ -16,20 +16,9 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-INPUT_DIR="Parser_Input_Programs/"
-
-# Combine the directory path with the provided file name
-INPUT_FILE="${INPUT_DIR}$1"
-
-# Check if the file exists
-if [ ! -f "$INPUT_FILE" ]; then
-    echo "File not found: $INPUT_FILE"
-    exit 1
-fi
-
 # Run the parser (assuming ast_parser.py takes the input file as an argument)
 echo "Running the parser..."
-python3 ast_parser.py "$INPUT_FILE"
+python3 ast_parser.py "$1"
 
 # Notify the user if the execution was successful
 if [ $? -eq 0 ]; then
