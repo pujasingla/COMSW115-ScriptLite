@@ -1,5 +1,7 @@
 # COMSW115-ScriptLite
 
+Team Name: Byte Sized Duo
+
 Team Members: Puja Singla (ps3467), Ria Luo (xl3466)
 
 **Video demo for parser (Programming 2):** https://drive.google.com/file/d/14Eowv9yAQSn401B3Jn-2aXUW_2a-pLG2/view?usp=drive_link
