@@ -1,0 +1,6 @@
+string dest_dir = "backup_folder";
+create_directory dest_dir;
+display_files dest_dir;
+string src_dir = "dir1"
+copy_files file in src_dir ends_with ".log" to dest_dir;
+display_files dest_dir;

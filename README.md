@@ -6,6 +6,8 @@ Team Members: Puja Singla (ps3467), Ria Luo (xl3466)
 
 **Video demo for parser (Programming 2):** https://drive.google.com/file/d/14Eowv9yAQSn401B3Jn-2aXUW_2a-pLG2/view?usp=drive_link
 
+**Video demo for Code Generation (Programming 3):** https://drive.google.com/file/d/1Cd235Fbfq1xfSEYqohKIjWhuW38NwGNg/view?usp=sharing
+
 **ScriptLite** is a language designed to simplify file management with a clear, easy-to-understand syntax that abstracts away complex shell commands for users who may be less familiar with shell scripts. It supports basic file operation commands, such as creating new directories, moving files, and copying files, as well as more advanced operations like batch moving files, batch renaming files, backing up files, and syncing files. The goals of this language are to:
 
 1. **Simplify file management** for users unfamiliar with shell scripts, enabling them to perform complex file operations like batch-copying, syncing, and backups without the need for loops or extensive scripting.
@@ -214,6 +216,35 @@ In all the cases, the scanner advances the cursor to the next character after
 logging the error, ensuring that it can continue scanning the input rather than
 halting on encountering an error.
 ---
+## Code Generator Algorithm
+
+**Code generator** program converts a custom scripting language into executable **Bash shell scripts**. It allows users to write high-level scripts using a predefined grammar, which the program parses, processes, and translates into Bash commands. The tool supports various functionalities, including file management, string and list operations, function definitions, and flow control constructs (e.g., `foreach` loops).
+
+---
+
+### Features
+- **Tokenization and Parsing**  
+  Uses a `Scanner` to tokenize input code and a `Parser` to construct an Abstract Syntax Tree (AST) from the tokens.
+
+- **Shell Script Generation**  
+  Translates the AST into a valid Bash shell script, preserving the logic and flow of the input program.
+
+- **Error Handling**  
+  - **Lexical Errors:** The `Scanner` identifies invalid tokens and displays errors with relevant details.
+  - **Syntax Errors:** The `Parser` reports invalid syntax and halts execution if the input program does not conform to the grammar.
+  - **Runtime Errors:** During script execution, any errors (e.g., invalid directory paths or missing files) are caught and displayed, ensuring robust handling of unexpected issues.
+  
+- **Supported Operations**
+  - File operations: creating directories, moving, copying, and renaming files.
+  - Variable declarations: supports strings and lists.
+  - Function definitions and calls with parameter handling.
+  - Flow control: supports `foreach` loops for iterating over lists.
+
+- **Automatic Execution**  
+  The generated shell script is automatically executed after creation.
+
+
+---
 ## Python Installation Steps
 
 ### macOS
@@ -257,7 +288,10 @@ Parser:
 ```bash
 chmod +x ast_parser.sh
 ```
-
+Code Generator: 
+```bash
+chmod +x run_generator.sh
+```
  Following are the description of each program and the command to execute the program. The expected output for each program for scanner is given in `expected_output.txt` file.
 
 ### Add copyright to directories program
@@ -284,6 +318,9 @@ The program calls the `append_copyright_to_multiple_directories` function, which
 ```bash
 ./run_parser.sh adding_copyright_to_directories.txt   
 ```
+```bash
+ ./run_generator.sh adding_copyright_to_directories.txt 
+```
 
 ### Add new file program
 
@@ -301,7 +338,9 @@ This script performs basic file management tasks using the `ScriptLite` language
 ```bash
 ./run_parser.sh adding_newfile.txt 
 ```
-
+```bash
+ ./run_generator.sh adding_newfile.txt
+```
 ### Backup Log files program
 
 This ScriptLite program is designed to facilitate basic file management tasks, specifically creating directories and managing file copies. The script performs the following operations:
@@ -318,6 +357,9 @@ This ScriptLite program is designed to facilitate basic file management tasks, s
 ```bash
 ./run_parser.sh backup_log_files\(error\).txt 
 ```
+```bash
+ ./run_generator.sh bulk_rename_files_error.txt
+```
 ### Bulk Rename Files Program
 This ScriptLite program is designed to rename files in specified directories by adding a prefix to their original names. It starts by defining two directory paths, directory1 and directory2, which point to locations on a user's computer. It then creates a list named directories that includes these two directories.
 
@@ -327,6 +369,9 @@ The core functionality is encapsulated in the function rename_files_in_dirs, whi
 ```
 ```bash
  ./run_parser.sh bulk_rename_files\(error\).txt 
+```
+```bash
+ ./run_generator.sh bulk_rename_files.txt
 ```
 
 ### Organize files by extension program
@@ -349,6 +394,8 @@ The program concludes by calling the `organize_all_files` function, passing the 
 ```bash
  ./run_parser.sh organize_files_by_extension\(error\).txt 
 ```
-
+```bash
+ ./run_generator.sh organize_files_by_extension.txt
+```
 ---
 
