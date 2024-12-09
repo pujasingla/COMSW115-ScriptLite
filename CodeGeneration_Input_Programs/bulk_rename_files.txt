@@ -3,6 +3,11 @@ string directory2 = "dir2";
 list directories = [directory1, directory2];
 string prefix = "test";
 
+define not_used (list directories, string prefix)
+{
+    bulk_rename_files file in directories to prefix + file;
+}
+
 define rename_files_in_dirs (list directories, string prefix)
 {
     bulk_rename_files file in directories to prefix + file;
