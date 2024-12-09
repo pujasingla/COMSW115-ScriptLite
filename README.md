@@ -275,6 +275,12 @@ After installation, verify that Python was installed correctly by running:
 ```bash
 python3 --version
 ```
+
+### Make Test Directories (to run code generation programs)
+```bash
+./make_test_dirs.sh
+```
+
 ---
 ## Executing Shell Script (5 Example Programs)
 To make the script executable, run the following command:
@@ -358,7 +364,7 @@ This ScriptLite program is designed to facilitate basic file management tasks, s
 ./run_parser.sh backup_log_files\(error\).txt 
 ```
 ```bash
- ./run_generator.sh bulk_rename_files_error.txt
+./run_generator.sh backup_log_files_error.txt
 ```
 ### Bulk Rename Files Program
 This ScriptLite program is designed to rename files in specified directories by adding a prefix to their original names. It starts by defining two directory paths, directory1 and directory2, which point to locations on a user's computer. It then creates a list named directories that includes these two directories.
