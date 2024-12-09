@@ -21,7 +21,7 @@ define organize_docx_files (string source_directory, string target_directory)
     move_files file in source_directory ends_with ".docx" to target_directory;
 }
 
-define organize_all_files (string source_directory, string target_directory_pdf, string target_directory_jpg, string target_directory_docx)
+define organize_all_files (string source_directory, string target_directory_jpg, string target_directory_pdf, string target_directory_docx)
 {
     call organize_jpg_files(source_directory, target_directory_jpg);
     call organize_pdf_files(source_directory, target_directory_pdf);
