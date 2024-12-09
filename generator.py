@@ -10,7 +10,7 @@ class Generator:
         self.ast = ast
         self.global_vars2type = {}
         self.funcs_vars2type = {} # maps function name to dir1 dict of vars2type
-        self.func_calls = []
+        self.func_calls = set()
     
     def generate(self):
         return self.generate_node(self.ast)
@@ -57,7 +57,7 @@ class Generator:
                         list_items.append(f"\"${child.value}\"")
 
             self.global_vars2type[var_name] = "list"
-            return f"\t{var_name}=({' '.join(list_items)})"
+            return f"{var_name}=({' '.join(list_items)})"
         return ""
 
     def generate_function(self, node):
@@ -90,7 +90,7 @@ class Generator:
                     args.append(f"\"${{{child.value}[@]}}\"")
                 else:
                     args.append(f"\"${child.value}\"")
-        self.func_calls.append(func_name)
+        self.func_calls.add(func_name)
         return f"\t{func_name} {' '.join(args)}"
 
     def generate_statement(self, node):
@@ -190,6 +190,26 @@ class Generator:
 
         return f"\tfor {var_name} in \"${{{list_name}[@]}}\"; do\n{block}\n\tdone"
 
+    def eliminate_dead_code(self, s):
+        filtered_lines = []
+        skip = False
+        for line in s.splitlines():
+            if line.strip().startswith('function'):
+                func_name = line.split()[1][:-2]
+                if func_name not in self.func_calls:
+                    print("skip")
+                    skip = True
+                else:
+                    skip = False
+                    filtered_lines.append(line)
+            
+            elif not skip:
+                filtered_lines.append(line)
+            elif line.strip().startswith('}'):
+                skip = False  
+
+        return "\n".join(filtered_lines)
+    
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Argument missing: python3 generator.py <input_file>")
@@ -227,11 +247,12 @@ if __name__ == "__main__":
     # Generate the shell script from the AST
     generator = Generator(ast)
     shell_script = generator.generate()
+    shell_script = generator.eliminate_dead_code(shell_script)
     print(shell_script)
     file_path = "generated_shell_script.sh"
     with open(file_path, "w") as file:
         file.write(shell_script)
-
+    
     try:
         # Run the script with the shell interpreter
         subprocess.run(["bash", file_path], check=True)

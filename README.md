@@ -379,6 +379,7 @@ The core functionality is encapsulated in the function rename_files_in_dirs, whi
 ```bash
  ./run_generator.sh bulk_rename_files.txt
 ```
+Note that for the last bulk_rename_files.txt, we have added a dead function "not_used" to the code to demonstrate the dead code elimination functionality of the generator.
 
 ### Organize files by extension program
 
